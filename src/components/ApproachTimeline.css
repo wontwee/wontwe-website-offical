@@ -1,0 +1,103 @@
+.w-approach {
+  position: relative;
+  padding-block: clamp(4.5rem, 9vh, 7.5rem);
+  background: radial-gradient(ellipse 70% 45% at 50% 0%, rgba(125, 24, 224, 0.1) 0%, var(--bg-void) 70%);
+  border-top: 1px solid var(--border-hairline);
+}
+
+.w-approach__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: clamp(2.5rem, 5vh, 3.5rem);
+}
+
+/* Interactive 4-Phase Horizontal Architectural Progression */
+.w-approach__progress-track {
+  position: relative;
+  height: 2px;
+  background: rgba(245, 247, 250, 0.1);
+  margin-bottom: 1.75rem;
+  overflow: hidden;
+}
+
+.w-approach__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-electric), var(--accent-ice));
+  transition: width 0.45s var(--ease-cinematic);
+}
+
+.w-approach__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.w-approach__node {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-hairline);
+  background: rgba(8, 13, 24, 0.55);
+  text-align: left;
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s var(--ease-cinematic);
+}
+
+.w-approach__node:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.w-approach__node--active {
+  border-color: var(--accent-ice);
+  background: linear-gradient(160deg, rgba(125, 24, 224, 0.16) 0%, rgba(10, 11, 18, 0.9) 100%);
+}
+
+.w-approach__node-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-ice);
+}
+
+.w-approach__node-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.45rem;
+}
+
+.w-approach__node-desc {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.w-approach__artifact {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-hairline);
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-ice);
+}
+
+@media (max-width: 960px) {
+  .w-approach__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .w-approach__grid {
+    grid-template-columns: 1fr;
+  }
+}

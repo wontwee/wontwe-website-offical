@@ -1,0 +1,60 @@
+:root {
+  /* Primary Brand Surfaces (Black & Graphite Dark Architecture) */
+  --bg-void: #050608;
+  --bg-navy: #0a0b12;
+  --bg-graphite: #111219;
+  --bg-elevated: rgba(17, 18, 25, 0.78);
+  --bg-glass: rgba(10, 11, 18, 0.76);
+
+  /* Typography Colors (Crisp White & Neutral Slate) */
+  --text-primary: #f5f7fa;
+  --text-muted: #989dab;
+  --text-subtle: #646978;
+
+  /* Official WONTWE Brand Purple Accent (#7D18E0 / #751CCE) */
+  --accent-electric: #7d18e0;
+  --accent-deep: #5e12b8;
+  --accent-ice: #a86bff;
+  --accent-electric-soft: rgba(125, 24, 224, 0.16);
+  --accent-ice-soft: rgba(168, 107, 255, 0.14);
+
+  /* Hairlines & Surfaces */
+  --border-hairline: rgba(245, 247, 250, 0.09);
+  --border-strong: rgba(245, 247, 250, 0.18);
+  --border-accent: rgba(168, 107, 255, 0.44);
+
+  /* Typography Families */
+  --font-display: 'Space Grotesk', 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-editorial: 'Sora', 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui: 'Manrope', 'Inter', sans-serif;
+
+  /* Fluid Type Scale */
+  --text-hero-wordmark: clamp(3.75rem, 12vw, 11.25rem);
+  --text-world-headline: clamp(2.4rem, 5.8vw, 5.5rem);
+  --text-section-headline: clamp(2.1rem, 4.6vw, 4.25rem);
+  --text-subheadline: clamp(1.2rem, 2vw, 1.75rem);
+  --text-lead: clamp(1.05rem, 1.35vw, 1.3rem);
+  --text-body: clamp(0.95rem, 1.05vw, 1.05rem);
+  --text-micro: clamp(0.7rem, 0.8vw, 0.78rem);
+
+  /* Layout & Spacing */
+  --container-max: 1360px;
+  --gutter-x: clamp(1.25rem, 5.2vw, 5rem);
+  --section-pad-y: clamp(5rem, 10vh, 9rem);
+  --nav-height: 76px;
+
+  /* Motion Curves */
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-architectural: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-subtle: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index Hierarchy */
+  --z-base: 1;
+  --z-canvas: 5;
+  --z-content: 10;
+  --z-sticky-ui: 20;
+  --z-navbar: 50;
+  --z-overlay: 90;
+  --z-skip: 120;
+}

@@ -1,0 +1,101 @@
+.w-footer {
+  border-top: 1px solid var(--border-hairline);
+  background: #030406;
+  padding-block: clamp(3rem, 6vh, 4.5rem);
+}
+
+.w-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.w-footer__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.w-footer__statement {
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.w-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.w-footer__nav button:hover,
+.w-footer__nav a:hover {
+  color: var(--accent-ice);
+}
+
+.w-footer__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.25rem;
+}
+
+.w-footer__contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.w-footer__contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.52rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-hairline);
+  background: rgba(17, 18, 25, 0.72);
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.w-footer__contact-link:hover {
+  border-color: var(--accent-ice);
+  background: rgba(125, 24, 224, 0.16);
+}
+
+.w-footer__contact-link--whatsapp {
+  border-color: rgba(168, 107, 255, 0.45);
+  background: rgba(125, 24, 224, 0.2);
+}
+
+@media (max-width: 768px) {
+  .w-footer__right {
+    align-items: flex-start;
+  }
+}
+
+.w-footer__bottom {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(245, 247, 250, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+}
+
