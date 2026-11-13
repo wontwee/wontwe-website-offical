@@ -1,0 +1,399 @@
+/* ==========================================================================
+   INTERACTIVE PROJECT SCOPE ESTIMATOR
+   ========================================================================== */
+
+.w-estimator {
+  position: relative;
+  padding-block: clamp(4.5rem, 8vh, 7rem);
+  background: var(--bg-void);
+  border-top: 1px solid var(--border-hairline);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme='light'] .w-estimator {
+  background: #f8fafc;
+  border-top-color: #e2e8f0;
+}
+
+.w-estimator__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.w-estimator__grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.25fr) minmax(340px, 1.05fr);
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .w-estimator__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Controls Column */
+.w-estimator__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.w-estimator__step {
+  padding: 1.35rem 1.45rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-hairline);
+  background: rgba(8, 13, 24, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+[data-theme='light'] .w-estimator__step {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.w-estimator__step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.w-estimator__step-num {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--accent-ice);
+  line-height: 1;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(125, 24, 224, 0.2);
+}
+
+[data-theme='light'] .w-estimator__step-num {
+  background: rgba(125, 24, 224, 0.1);
+  color: #7d18e0;
+}
+
+.w-estimator__step-title {
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-primary);
+}
+
+.w-estimator__step-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.w-estimator__chips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.55rem;
+}
+
+.w-estimator__chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.65rem 0.95rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-hairline);
+  background: rgba(5, 6, 8, 0.65);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+[data-theme='light'] .w-estimator__chip {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.w-estimator__chip:hover {
+  border-color: var(--border-strong);
+  background: rgba(125, 24, 224, 0.1);
+  transform: translateY(-1px);
+}
+
+[data-theme='light'] .w-estimator__chip:hover {
+  border-color: #7d18e0;
+  background: rgba(125, 24, 224, 0.06);
+}
+
+.w-estimator__chip--active {
+  border-color: var(--accent-ice);
+  background: rgba(125, 24, 224, 0.24);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(125, 24, 224, 0.25);
+}
+
+[data-theme='light'] .w-estimator__chip--active {
+  background: #7d18e0;
+  border-color: #7d18e0;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(125, 24, 224, 0.22);
+}
+
+.w-estimator__chip-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.w-estimator__chip-div,
+.w-estimator__chip-badge,
+.w-estimator__chip-tag {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-subtle);
+  flex-shrink: 0;
+}
+
+[data-theme='light'] .w-estimator__chip-div,
+[data-theme='light'] .w-estimator__chip-badge,
+[data-theme='light'] .w-estimator__chip-tag {
+  background: rgba(0, 0, 0, 0.06);
+  color: #475569;
+}
+
+.w-estimator__chip--active .w-estimator__chip-div,
+.w-estimator__chip--active .w-estimator__chip-badge,
+.w-estimator__chip--active .w-estimator__chip-tag {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.w-estimator__chip-check {
+  color: var(--accent-ice);
+  flex-shrink: 0;
+}
+
+[data-theme='light'] .w-estimator__chip--active .w-estimator__chip-check {
+  color: #ffffff;
+}
+
+/* Blueprint Column */
+.w-estimator__blueprint {
+  border-radius: 12px;
+  border: 1px solid var(--border-hairline);
+  background: rgba(8, 13, 24, 0.75);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+[data-theme='light'] .w-estimator__blueprint {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 16px 44px rgba(15, 23, 42, 0.08);
+}
+
+.w-estimator__bp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.95rem 1.4rem;
+  background: rgba(5, 6, 8, 0.6);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+[data-theme='light'] .w-estimator__bp-head {
+  background: #f8fafc;
+  border-bottom-color: #e2e8f0;
+}
+
+.w-estimator__bp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #10b981;
+}
+
+.w-estimator__bp-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.w-estimator__bp-code {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--accent-ice);
+  font-weight: 600;
+}
+
+.w-estimator__bp-body {
+  padding: clamp(1.4rem, 2.5vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  flex: 1;
+}
+
+.w-estimator__bp-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.w-estimator__bp-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.2vw, 1.95rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.w-estimator__bp-scale {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.w-estimator__bp-scale strong {
+  color: var(--accent-ice);
+}
+
+[data-theme='light'] .w-estimator__bp-scale strong {
+  color: #7d18e0;
+}
+
+.w-estimator__bp-section-title {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-subtle);
+  margin-bottom: 0.55rem;
+  display: block;
+}
+
+.w-estimator__bp-feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.w-estimator__bp-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.86rem;
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .w-estimator__bp-feature-item {
+  color: #334155;
+}
+
+.w-estimator__bp-feature-check {
+  color: var(--accent-ice);
+  flex-shrink: 0;
+}
+
+[data-theme='light'] .w-estimator__bp-feature-check {
+  color: #7d18e0;
+}
+
+.w-estimator__bp-stack-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.w-estimator__bp-stack-chip {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.28rem 0.65rem;
+  border-radius: 4px;
+  background: rgba(125, 24, 224, 0.14);
+  border: 1px solid rgba(125, 24, 224, 0.25);
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .w-estimator__bp-stack-chip {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.w-estimator__bp-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-theme='light'] .w-estimator__bp-actions {
+  border-top-color: #e2e8f0;
+}
+
+.w-estimator__apply-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.4rem;
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.w-estimator__whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(37, 211, 102, 0.4);
+  background: rgba(37, 211, 102, 0.12);
+  color: #25d366;
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.w-estimator__whatsapp-btn:hover {
+  background: rgba(37, 211, 102, 0.22);
+  border-color: #25d366;
+  box-shadow: 0 0 16px rgba(37, 211, 102, 0.25);
+}
+

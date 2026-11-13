@@ -4,6 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#050608" />
+    <script>
+      (function () {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var paramTheme = params.get('theme');
+          var stored = localStorage.getItem('wontwe-theme');
+          var active =
+            paramTheme === 'light' || paramTheme === 'dark'
+              ? paramTheme
+              : stored === 'light'
+                ? 'light'
+                : 'dark';
+          var root = document.documentElement;
+          root.setAttribute('data-theme', active);
+          root.classList.remove('dark', 'light');
+          root.classList.add(active);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', active === 'light' ? '#F8F9FC' : '#050608');
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
     <title>WONTWE — Yes we Do. | Engineering What's Next</title>
@@ -17,6 +38,30 @@
       content="We design, engineer and deploy digital solutions that help businesses evolve."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="WONTWE — Yes we Do. | Engineering What's Next" />
+    <meta
+      name="twitter:description"
+      content="Software engineering, intelligent business systems, AI & automation, cloud infrastructure, and digital growth."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "WONTWE",
+        "slogan": "Yes we Do.",
+        "description": "Integrated technology and creative company offering Software Engineering, Business Systems, AI & Automation, Cloud & DevOps, Digital Growth, Commercial Studios, and Corporate Events.",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91-8095770506",
+          "contactType": "sales"
+        }
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

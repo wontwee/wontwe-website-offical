@@ -17,9 +17,6 @@ export const WorldDigital: React.FC<WorldDigitalProps> = ({ onEnquireService }) 
   const activeService = digitalWorld.services[selectedServiceIdx] ?? digitalWorld.services[0];
 
   const isBrandFocus = digitalWorld.clusters[1].items.some((i) => i.name === activeService.name);
-  const curvePath = isBrandFocus
-    ? 'M 0 78 C 70 40, 140 72, 210 42 C 280 14, 355 52, 440 20'
-    : 'M 0 88 C 65 82, 120 58, 180 42 C 240 28, 305 38, 365 18 C 405 10, 425 12, 440 9';
 
   return (
     <section
@@ -83,19 +80,6 @@ export const WorldDigital: React.FC<WorldDigitalProps> = ({ onEnquireService }) 
                   {isBrandFocus ? 'BRAND & CONTENT SYSTEM' : 'GROWTH & ACQUISITION'}
                 </span>
                 <span className="w-world__env-name">11 CAPABILITIES</span>
-              </div>
-
-              <div className="w-digital__wave-box">
-                <svg viewBox="0 0 440 92" className="w-digital__wave-svg" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="digGrad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#7D18E0" />
-                      <stop offset="100%" stopColor="#A86BFF" />
-                    </linearGradient>
-                  </defs>
-                  <line x1="0" y1="46" x2="440" y2="46" stroke="rgba(245,247,250,0.06)" strokeDasharray="3 4" />
-                  <path d={curvePath} fill="none" stroke="url(#digGrad)" strokeWidth="2.4" />
-                </svg>
               </div>
 
               <div className="w-digital__focus-row">

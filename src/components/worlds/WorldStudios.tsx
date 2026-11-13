@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { WORLDS } from '../../data/wontweData';
+import { handleTablistKeyDown } from '../../utils/a11y';
 import { scrollToSection } from '../../utils/motion';
 import { OptimizedImage } from '../OptimizedImage';
 import './WorldsShared.css';
@@ -14,7 +15,15 @@ const studiosWorld = WORLDS[2];
 
 export const WorldStudios: React.FC<WorldStudiosProps> = ({ onEnquireService }) => {
   const [clusterIdx, setClusterIdx] = useState(0);
+  const [selectedItemIdx, setSelectedItemIdx] = useState(0);
+
   const activeCluster = studiosWorld.clusters[clusterIdx] ?? studiosWorld.clusters[0];
+  const activeItem = activeCluster.items[selectedItemIdx] ?? activeCluster.items[0];
+
+  const handleSelectCluster = (idx: number) => {
+    setClusterIdx(idx);
+    setSelectedItemIdx(0);
+  };
 
   return (
     <section
@@ -41,9 +50,12 @@ export const WorldStudios: React.FC<WorldStudiosProps> = ({ onEnquireService }) 
               className="w-studios__img"
             />
             <div className="w-studios__visual-overlay">
-              <span className="w-world__env-name" style={{ color: 'rgba(245, 247, 250, 0.8)' }}>
-                COMMERCIAL PRODUCTION · MOTION · 2D &amp; 3D
-              </span>
+              <div className="w-studios__frame-meta">
+                <span className="w-studios__frame-kicker">
+                  {activeCluster.cluster.toUpperCase()} // {activeItem.deliverable.toUpperCase()}
+                </span>
+                <span className="w-studios__frame-title">{activeItem.name}</span>
+              </div>
             </div>
           </div>
 
@@ -63,29 +75,42 @@ export const WorldStudios: React.FC<WorldStudiosProps> = ({ onEnquireService }) 
                   type="button"
                   role="tab"
                   aria-selected={idx === clusterIdx}
+                  tabIndex={idx === clusterIdx ? 0 : -1}
                   className={`w-studios__tab ${idx === clusterIdx ? 'w-studios__tab--active' : ''}`}
-                  onClick={() => setClusterIdx(idx)}
+                  onClick={() => handleSelectCluster(idx)}
+                  onKeyDown={(e) =>
+                    handleTablistKeyDown(e, idx, studiosWorld.clusters.length, handleSelectCluster)
+                  }
                 >
                   {cluster.cluster}
                 </button>
               ))}
             </div>
 
-            <div className="w-studios__pills">
-              {activeCluster.items.map((item) => (
-                <button
-                  key={item.name}
-                  type="button"
-                  className="w-studios__pill"
-                  title={item.detail}
-                  onClick={() => {
-                    onEnquireService?.(studiosWorld.name, item.name);
-                    scrollToSection('contact');
-                  }}
-                >
-                  {item.name}
-                </button>
-              ))}
+            <div className="w-studios__pills" role="listbox" aria-label={activeCluster.cluster}>
+              {activeCluster.items.map((item, idx) => {
+                const isSelected = idx === selectedItemIdx;
+                return (
+                  <button
+                    key={item.name}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    className={`w-studios__pill ${isSelected ? 'w-studios__pill--active' : ''}`}
+                    onClick={() => setSelectedItemIdx(idx)}
+                  >
+                    {item.name}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="w-studios__focus-box" aria-live="polite">
+              <div className="w-studios__focus-head">
+                <span className="w-studios__focus-name">{activeItem.name}</span>
+                <span className="w-studios__focus-tag">{activeItem.deliverable}</span>
+              </div>
+              <p className="w-studios__focus-detail">{activeItem.detail}</p>
             </div>
 
             <button
@@ -93,11 +118,11 @@ export const WorldStudios: React.FC<WorldStudiosProps> = ({ onEnquireService }) 
               className="w-services__link-action"
               style={{ width: 'fit-content' }}
               onClick={() => {
-                onEnquireService?.(studiosWorld.name, activeCluster.cluster);
+                onEnquireService?.(studiosWorld.name, activeItem.name);
                 scrollToSection('contact');
               }}
             >
-              <span>ENQUIRE WITH WONTWE STUDIOS</span>
+              <span>ENQUIRE: {activeItem.name.toUpperCase()}</span>
               <ArrowUpRight size={14} aria-hidden="true" />
             </button>
           </div>

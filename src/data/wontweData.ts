@@ -31,6 +31,7 @@ export interface WorldDivision {
   telemetryTag: string;
   services: ServiceItem[];
   clusters: CapabilityCluster[];
+  comingSoon?: boolean;
 }
 
 export interface SoftwareProductShowcase {
@@ -437,6 +438,7 @@ export const WORLDS: WorldDivision[] = [
     description:
       'Product photography, corporate films, motion graphics, and 3D visuals supporting software launches and corporate brands.',
     telemetryTag: 'SUPPORTING DIVISION // STUDIOS',
+    comingSoon: true,
     clusters: [
       {
         cluster: 'Photography & Video',
@@ -490,6 +492,7 @@ export const WORLDS: WorldDivision[] = [
     description:
       'Turnkey planning and technical staging for product launches, conferences, exhibitions, and corporate milestones.',
     telemetryTag: 'SUPPORTING DIVISION // EVENTS',
+    comingSoon: true,
     clusters: [
       {
         cluster: 'Corporate & Exhibitions',
@@ -537,6 +540,9 @@ export const WORLDS: WorldDivision[] = [
 WORLDS.forEach((world) => {
   world.services = world.clusters.flatMap((c) => c.items);
 });
+
+export const ACTIVE_WORLDS = WORLDS.filter((w) => !w.comingSoon);
+export const COMING_SOON_WORLDS = WORLDS.filter((w) => !!w.comingSoon);
 
 export const APPROACH_STAGES: ApproachStage[] = [
   {

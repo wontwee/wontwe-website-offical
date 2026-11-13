@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Menu, MessageCircle, Phone, X } from 'lucide-react';
 import { buildWhatsAppUrl, CONTACT_INFO, NAV_ITEMS } from '../data/wontweData';
 import { scrollToSection } from '../utils/motion';
 import { BrandMark } from './BrandMark';
+import { ThemeToggle } from './ThemeToggle';
 import './Navbar.css';
 
 interface ChapterMarker {
@@ -16,10 +17,8 @@ const CHAPTERS: ChapterMarker[] = [
   { id: 'about', label: 'TECHNOLOGY', navMatch: 'about' },
   { id: 'world-tech', label: '01 · TECH', navMatch: 'divisions' },
   { id: 'world-digital', label: '02 · DIGITAL', navMatch: 'divisions' },
-  { id: 'world-studios', label: '03 · STUDIOS', navMatch: 'divisions' },
-  { id: 'world-events', label: '04 · EVENTS', navMatch: 'divisions' },
+  { id: 'future-divisions', label: 'COMING SOON', navMatch: 'divisions' },
   { id: 'approach', label: 'APPROACH', navMatch: 'divisions' },
-  { id: 'experiments', label: 'SYSTEMS', navMatch: 'divisions' },
   { id: 'services', label: 'SERVICES', navMatch: 'services' },
   { id: 'contact', label: 'CONTACT', navMatch: 'contact' },
 ];
@@ -29,6 +28,10 @@ export const Navbar: React.FC = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeChapter, setActiveChapter] = useState<ChapterMarker>(CHAPTERS[0]);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const wasOpenRef = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,14 +72,59 @@ export const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!menuOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
-    };
+    const mainEl = document.getElementById('main-content');
+    const footerEl = document.querySelector('footer');
+
+    if (!menuOpen) {
+      document.body.style.overflow = '';
+      mainEl?.removeAttribute('inert');
+      footerEl?.removeAttribute('inert');
+      if (wasOpenRef.current) {
+        wasOpenRef.current = false;
+        burgerRef.current?.focus();
+      }
+      return;
+    }
+
+    wasOpenRef.current = true;
     document.body.style.overflow = 'hidden';
+    mainEl?.setAttribute('inert', '');
+    footerEl?.setAttribute('inert', '');
+
+    const overlay = overlayRef.current;
+    const focusables = overlay
+      ? Array.from(
+          overlay.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        )
+      : [];
+
+    focusables[0]?.focus();
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        return;
+      }
+      if (e.key === 'Tab' && focusables.length > 0) {
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
     window.addEventListener('keydown', handleKey);
     return () => {
       document.body.style.overflow = '';
+      mainEl?.removeAttribute('inert');
+      footerEl?.removeAttribute('inert');
       window.removeEventListener('keydown', handleKey);
     };
   }, [menuOpen]);
@@ -132,47 +180,30 @@ export const Navbar: React.FC = () => {
             </ul>
           </nav>
 
-          <div className="w-navbar__status" aria-live="polite">
-            <span className="w-navbar__status-dot" aria-hidden="true" />
-            <span>WONTWE // {activeChapter.label}</span>
+          <div className="w-navbar__actions">
+            <ThemeToggle />
+            <button
+              ref={burgerRef}
+              type="button"
+              className="w-navbar__burger"
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation-overlay"
+              onClick={() => setMenuOpen((prev) => !prev)}
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
-
-          <button
-            type="button"
-            className="w-navbar__burger"
-            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-navigation-overlay"
-            onClick={() => setMenuOpen((prev) => !prev)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
         </div>
       </header>
 
-      {/* Desktop Chapter Rail */}
-      <aside className="w-chapter-rail" aria-label="Experience Chapters">
-        {CHAPTERS.map((chapter) => {
-          const isCurrent = activeChapter.id === chapter.id;
-          return (
-            <button
-              key={chapter.id}
-              type="button"
-              className={`w-chapter-item ${isCurrent ? 'w-chapter-item--active' : ''}`}
-              onClick={() => scrollToSection(chapter.id)}
-              aria-label={`Jump to ${chapter.label}`}
-              aria-current={isCurrent ? 'location' : undefined}
-            >
-              <span className="w-chapter-item__label">{chapter.label}</span>
-              <span className="w-chapter-item__pip" />
-            </button>
-          );
-        })}
-      </aside>
-
       {/* Mobile Fullscreen Architectural Menu */}
       <div
+        ref={overlayRef}
         id="mobile-navigation-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile Navigation Menu"
         className={`w-mobile-menu ${menuOpen ? 'w-mobile-menu--open' : ''}`}
         aria-hidden={!menuOpen}
       >
@@ -198,7 +229,8 @@ export const Navbar: React.FC = () => {
         </nav>
 
         <div className="w-mobile-menu__footer">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', marginBottom: '1rem', alignItems: 'center' }}>
+            <ThemeToggle className="w-theme-toggle--with-label" showLabel />
             <a
               href={CONTACT_INFO.phoneHref}
               tabIndex={menuOpen ? 0 : -1}
@@ -229,7 +261,7 @@ export const Navbar: React.FC = () => {
                 padding: '0.55rem 0.95rem',
                 borderRadius: '999px',
                 background: 'linear-gradient(135deg, var(--accent-electric) 0%, var(--accent-deep) 100%)',
-                color: 'var(--text-primary)',
+                color: '#f5f7fa',
                 fontSize: '0.78rem',
                 fontWeight: 600,
               }}
@@ -244,4 +276,3 @@ export const Navbar: React.FC = () => {
     </>
   );
 };
-

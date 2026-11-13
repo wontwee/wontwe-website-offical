@@ -2,42 +2,54 @@ import React, { useEffect, useState } from 'react';
 import { AboutSection } from './components/AboutSection';
 import { ApproachTimeline } from './components/ApproachTimeline';
 import { CapabilitiesIndex } from './components/CapabilitiesIndex';
+import { ComingSoonDivisions } from './components/ComingSoonDivisions';
 import { ContactSection } from './components/ContactSection';
-import { ExperimentsSection } from './components/ExperimentsSection';
 import { FloatingContactDock } from './components/FloatingContactDock';
 import { Footer } from './components/Footer';
 import { HeroScene } from './components/HeroScene';
+import { MetricCounters } from './components/MetricCounters';
 import { Navbar } from './components/Navbar';
-import { OpticalCursor } from './components/OpticalCursor';
+import { ProjectScopeEstimator } from './components/ProjectScopeEstimator';
 import { WorldDigital } from './components/worlds/WorldDigital';
-import { WorldEvents } from './components/worlds/WorldEvents';
-import { WorldStudios } from './components/worlds/WorldStudios';
 import { WorldTech } from './components/worlds/WorldTech';
-import { ScrollTrigger } from './utils/motion';
+import { initSpotlightTracker } from './utils/spotlight';
 
 export const App: React.FC = () => {
   const [enquiryTarget, setEnquiryTarget] = useState<{
     division: string | null;
     service: string | null;
-  }>({ division: null, service: null });
+    brief: string | null;
+  }>({ division: null, service: null, brief: null });
+
+  useEffect(() => {
+    const cleanupSpotlight = initSpotlightTracker();
+    if (window.location.hash) {
+      const id = window.location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'auto' });
+    }
+    return () => cleanupSpotlight();
+  }, []);
 
   const handleEnquire = (divisionName: string, serviceName?: string) => {
     setEnquiryTarget({
       division: divisionName,
       service: serviceName ?? null,
+      brief: null,
     });
   };
 
-  useEffect(() => {
-    const refreshTriggers = () => ScrollTrigger.refresh();
-    window.addEventListener('load', refreshTriggers);
-    const timer = setTimeout(refreshTriggers, 450);
+  const handleApplyBrief = (briefText: string, divisionName: string) => {
+    setEnquiryTarget({
+      division: divisionName,
+      service: null,
+      brief: briefText,
+    });
+  };
 
-    return () => {
-      window.removeEventListener('load', refreshTriggers);
-      clearTimeout(timer);
-    };
-  }, []);
+  const handleClearPreselection = () => {
+    setEnquiryTarget({ division: null, service: null, brief: null });
+  };
 
   return (
     <div className="w-app">
@@ -45,27 +57,28 @@ export const App: React.FC = () => {
         Skip to main content
       </a>
 
-      <OpticalCursor />
       <Navbar />
       <FloatingContactDock />
 
       <main id="main-content">
         <HeroScene />
+        <MetricCounters />
         <AboutSection />
 
         <div id="divisions" aria-label="WONTWE Divisions">
           <WorldTech onEnquireService={handleEnquire} />
           <WorldDigital onEnquireService={handleEnquire} />
-          <WorldStudios onEnquireService={handleEnquire} />
-          <WorldEvents onEnquireService={handleEnquire} />
+          <ComingSoonDivisions />
         </div>
 
         <ApproachTimeline />
-        <ExperimentsSection />
         <CapabilitiesIndex onEnquireService={handleEnquire} />
+        <ProjectScopeEstimator onApplyBrief={handleApplyBrief} />
         <ContactSection
           preselectedDivision={enquiryTarget.division}
           preselectedService={enquiryTarget.service}
+          preselectedBrief={enquiryTarget.brief}
+          onClearPreselection={handleClearPreselection}
         />
       </main>
 

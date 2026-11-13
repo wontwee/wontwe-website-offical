@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { APPROACH_STAGES, BRAND_STATEMENTS } from '../data/wontweData';
+import { APPROACH_STAGES } from '../data/wontweData';
 import './ApproachTimeline.css';
 
 export const ApproachTimeline: React.FC = () => {
@@ -11,14 +11,11 @@ export const ApproachTimeline: React.FC = () => {
       <div className="w-container">
         <div className="w-approach__top">
           <div>
-            <span className="telemetry-kicker">
-              ENGINEERING METHODOLOGY // {BRAND_STATEMENTS.tagline.toUpperCase()}
-            </span>
+            <span className="telemetry-kicker">OUR APPROACH</span>
             <h2 id="approach-heading" className="headline-section" style={{ marginTop: '0.75rem' }}>
               FROM ARCHITECTURE TO LAUNCH.
             </h2>
           </div>
-          <span className="w-world__env-name">INTERACTIVE DELIVERY PIPELINE</span>
         </div>
 
         <div className="w-approach__progress-track" aria-hidden="true">

@@ -12,6 +12,7 @@ interface BrandMarkProps {
 /**
  * Official WONTWE Brand Identity component rendering the original extracted
  * W monogram, complete WONTWE wordmark (with signature purple W), and "YES WE DO." lockup.
+ * Supports seamless dark (night) and light (bright) mode assets.
  */
 export const BrandMark: React.FC<BrandMarkProps> = ({
   className = '',
@@ -21,39 +22,55 @@ export const BrandMark: React.FC<BrandMarkProps> = ({
 }) => {
   if (variant === 'monogram') {
     return (
-      <picture className={`w-brand-picture ${className}`} style={{ display: 'inline-block' }}>
-        <source srcSet="/brand/wontwe-monogram.webp" type="image/webp" />
-        <img
-          src="/brand/wontwe-monogram.png"
-          alt="WONTWE monogram"
-          width={596}
-          height={444}
-          style={{
-            height: `${height}px`,
-            width: 'auto',
-            objectFit: 'contain',
-          }}
-        />
-      </picture>
+      <span className={`w-brand-mark ${className}`} style={{ display: 'inline-flex' }}>
+        <picture className="w-brand-dark">
+          <source srcSet="/brand/wontwe-monogram.webp" type="image/webp" />
+          <img
+            src="/brand/wontwe-monogram.png"
+            alt="WONTWE monogram"
+            width={596}
+            height={444}
+            style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
+          />
+        </picture>
+        <picture className="w-brand-light">
+          <source srcSet="/brand/wontwe-monogram-light.webp" type="image/webp" />
+          <img
+            src="/brand/wontwe-monogram-light.png"
+            alt="WONTWE monogram"
+            width={596}
+            height={444}
+            style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
+          />
+        </picture>
+      </span>
     );
   }
 
   if (variant === 'stacked') {
     return (
-      <picture className={`w-brand-picture ${className}`} style={{ display: 'inline-block' }}>
-        <source srcSet="/brand/wontwe-lockup-full.webp" type="image/webp" />
-        <img
-          src="/brand/wontwe-lockup-full.png"
-          alt="WONTWE — YES WE DO."
-          width={908}
-          height={706}
-          style={{
-            height: `${height}px`,
-            width: 'auto',
-            objectFit: 'contain',
-          }}
-        />
-      </picture>
+      <span className={`w-brand-mark ${className}`} style={{ display: 'inline-flex' }}>
+        <picture className="w-brand-dark">
+          <source srcSet="/brand/wontwe-lockup-full.webp" type="image/webp" />
+          <img
+            src="/brand/wontwe-lockup-full.png"
+            alt="WONTWE — YES WE DO."
+            width={908}
+            height={706}
+            style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
+          />
+        </picture>
+        <picture className="w-brand-light">
+          <source srcSet="/brand/wontwe-lockup-full-light.webp" type="image/webp" />
+          <img
+            src="/brand/wontwe-lockup-full-light.png"
+            alt="WONTWE — YES WE DO."
+            width={908}
+            height={706}
+            style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
+          />
+        </picture>
+      </span>
     );
   }
 
@@ -67,29 +84,54 @@ export const BrandMark: React.FC<BrandMarkProps> = ({
         gap: '0.72rem',
       }}
     >
-      <picture style={{ display: 'inline-block', flexShrink: 0 }}>
+      {/* Monogram */}
+      <picture className="w-brand-dark" style={{ flexShrink: 0 }}>
         <source srcSet="/brand/wontwe-monogram.webp" type="image/webp" />
         <img
           src="/brand/wontwe-monogram.png"
           alt="WONTWE"
           width={596}
           height={444}
+          style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
+        />
+      </picture>
+      <picture className="w-brand-light" style={{ flexShrink: 0 }}>
+        <source srcSet="/brand/wontwe-monogram-light.webp" type="image/webp" />
+        <img
+          src="/brand/wontwe-monogram-light.png"
+          alt="WONTWE"
+          width={596}
+          height={444}
+          style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
+        />
+      </picture>
+
+      {/* Wordmark */}
+      <picture
+        className={`w-brand-dark ${responsiveMobileMonogram ? 'w-brand-wordmark-hide-compact' : ''}`}
+        style={{ flexShrink: 0 }}
+      >
+        <source srcSet="/brand/wontwe-wordmark.webp" type="image/webp" />
+        <img
+          src="/brand/wontwe-wordmark.png"
+          alt=""
+          width={908}
+          height={136}
           style={{
-            height: `${height}px`,
+            height: `${Math.round(height * 0.64)}px`,
             width: 'auto',
             objectFit: 'contain',
           }}
         />
       </picture>
-
       <picture
-        className={responsiveMobileMonogram ? 'w-brand-wordmark-hide-compact' : ''}
-        style={{ display: 'inline-block', flexShrink: 0 }}
+        className={`w-brand-light ${responsiveMobileMonogram ? 'w-brand-wordmark-hide-compact' : ''}`}
+        style={{ flexShrink: 0 }}
       >
-        <source srcSet="/brand/wontwe-wordmark.webp" type="image/webp" />
+        <source srcSet="/brand/wontwe-wordmark-light.webp" type="image/webp" />
         <img
-          src="/brand/wontwe-wordmark.png"
-          alt="WONTWE wordmark"
+          src="/brand/wontwe-wordmark-light.png"
+          alt=""
           width={908}
           height={136}
           style={{

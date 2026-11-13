@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { WORLDS } from '../../data/wontweData';
+import { handleTablistKeyDown } from '../../utils/a11y';
 import { scrollToSection } from '../../utils/motion';
 import { OptimizedImage } from '../OptimizedImage';
 import './WorldsShared.css';
@@ -15,7 +16,15 @@ const eventsWorld = WORLDS[3];
 export const WorldEvents: React.FC<WorldEventsProps> = ({ onEnquireService }) => {
   const [stageLit, setStageLit] = useState(true);
   const [clusterIdx, setClusterIdx] = useState(0);
+  const [selectedItemIdx, setSelectedItemIdx] = useState(0);
+
   const activeCluster = eventsWorld.clusters[clusterIdx] ?? eventsWorld.clusters[0];
+  const activeItem = activeCluster.items[selectedItemIdx] ?? activeCluster.items[0];
+
+  const handleSelectCluster = (idx: number) => {
+    setClusterIdx(idx);
+    setSelectedItemIdx(0);
+  };
 
   return (
     <section
@@ -50,29 +59,42 @@ export const WorldEvents: React.FC<WorldEventsProps> = ({ onEnquireService }) =>
                   type="button"
                   role="tab"
                   aria-selected={idx === clusterIdx}
+                  tabIndex={idx === clusterIdx ? 0 : -1}
                   className={`w-events__tab ${idx === clusterIdx ? 'w-events__tab--active' : ''}`}
-                  onClick={() => setClusterIdx(idx)}
+                  onClick={() => handleSelectCluster(idx)}
+                  onKeyDown={(e) =>
+                    handleTablistKeyDown(e, idx, eventsWorld.clusters.length, handleSelectCluster)
+                  }
                 >
                   {cluster.cluster}
                 </button>
               ))}
             </div>
 
-            <div className="w-events__pills">
-              {activeCluster.items.map((item) => (
-                <button
-                  key={item.name}
-                  type="button"
-                  className="w-events__pill"
-                  title={item.detail}
-                  onClick={() => {
-                    onEnquireService?.(eventsWorld.name, item.name);
-                    scrollToSection('contact');
-                  }}
-                >
-                  {item.name}
-                </button>
-              ))}
+            <div className="w-events__pills" role="listbox" aria-label={activeCluster.cluster}>
+              {activeCluster.items.map((item, idx) => {
+                const isSelected = idx === selectedItemIdx;
+                return (
+                  <button
+                    key={item.name}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    className={`w-events__pill ${isSelected ? 'w-events__pill--active' : ''}`}
+                    onClick={() => setSelectedItemIdx(idx)}
+                  >
+                    {item.name}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="w-events__focus-box" aria-live="polite">
+              <div className="w-events__focus-head">
+                <span className="w-events__focus-name">{activeItem.name}</span>
+                <span className="w-events__focus-tag">{activeItem.deliverable}</span>
+              </div>
+              <p className="w-events__focus-detail">{activeItem.detail}</p>
             </div>
 
             <button
@@ -80,11 +102,11 @@ export const WorldEvents: React.FC<WorldEventsProps> = ({ onEnquireService }) =>
               className="w-services__link-action"
               style={{ width: 'fit-content' }}
               onClick={() => {
-                onEnquireService?.(eventsWorld.name, activeCluster.cluster);
+                onEnquireService?.(eventsWorld.name, activeItem.name);
                 scrollToSection('contact');
               }}
             >
-              <span>ENQUIRE WITH WONTWE EVENTS</span>
+              <span>ENQUIRE: {activeItem.name.toUpperCase()}</span>
               <ArrowUpRight size={14} aria-hidden="true" />
             </button>
           </div>
@@ -114,9 +136,12 @@ export const WorldEvents: React.FC<WorldEventsProps> = ({ onEnquireService }) =>
             </div>
 
             <div className="w-events__stage-controls">
-              <span className="w-world__env-name" style={{ color: 'rgba(245, 247, 250, 0.8)' }}>
-                CONFERENCES · LAUNCHES · EXHIBITIONS
-              </span>
+              <div className="w-events__frame-meta">
+                <span className="w-events__frame-kicker">
+                  {activeCluster.cluster.toUpperCase()} // {activeItem.deliverable.toUpperCase()}
+                </span>
+                <span className="w-events__frame-title">{activeItem.name}</span>
+              </div>
 
               <button
                 type="button"

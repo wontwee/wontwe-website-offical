@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, ArrowUpRight, Check, Copy, MessageCircle, Phone } from 'lucide-react';
+import { ArrowUpRight, Check, Copy, MessageCircle, Phone, X } from 'lucide-react';
 import {
+  ACTIVE_WORLDS,
   BRAND_STATEMENTS,
   buildWhatsAppUrl,
   CONTACT_INFO,
-  WORLDS,
 } from '../data/wontweData';
 import { BrandMark } from './BrandMark';
 import './ContactSection.css';
@@ -12,6 +12,8 @@ import './ContactSection.css';
 interface ContactSectionProps {
   preselectedDivision?: string | null;
   preselectedService?: string | null;
+  preselectedBrief?: string | null;
+  onClearPreselection?: () => void;
 }
 
 interface FormValues {
@@ -29,16 +31,21 @@ interface FormErrors {
   brief?: string;
 }
 
+type SubmissionState = 'idle' | 'submitting' | 'sent' | 'local-only' | 'error';
+
 const DIVISION_CHOICES = [
-  ...WORLDS.map((w) => w.name),
-  'Integrated Multi-Division',
+  ...ACTIVE_WORLDS.map((w) => w.name),
+  'Integrated Software & Digital',
 ];
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const ENQUIRY_ENDPOINT = import.meta.env.VITE_ENQUIRY_ENDPOINT?.trim() || '';
 
 export const ContactSection: React.FC<ContactSectionProps> = ({
   preselectedDivision,
   preselectedService,
+  preselectedBrief,
+  onClearPreselection,
 }) => {
   const [values, setValues] = useState<FormValues>({
     name: '',
@@ -49,22 +56,40 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [validatedPayload, setValidatedPayload] = useState<FormValues | null>(null);
+  const [submitState, setSubmitState] = useState<SubmissionState>('idle');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (preselectedDivision && DIVISION_CHOICES.includes(preselectedDivision)) {
+    if (preselectedBrief) {
       setValues((prev) => ({
         ...prev,
-        divisions: prev.divisions.includes(preselectedDivision)
-          ? prev.divisions
-          : [...prev.divisions, preselectedDivision],
+        divisions: preselectedDivision && DIVISION_CHOICES.includes(preselectedDivision) ? [preselectedDivision] : prev.divisions,
+        brief: preselectedBrief,
+      }));
+      setValidatedPayload(null);
+      setSubmitState('idle');
+    } else if (preselectedDivision && DIVISION_CHOICES.includes(preselectedDivision)) {
+      setValues((prev) => ({
+        ...prev,
+        divisions: [preselectedDivision],
         brief:
-          preselectedService && !prev.brief.includes(preselectedService)
+          preselectedService &&
+          (!prev.brief.trim() || prev.brief.startsWith('Enquiry regarding '))
             ? `Enquiry regarding ${preselectedService} (${preselectedDivision}): `
             : prev.brief,
       }));
+      setValidatedPayload(null);
+      setSubmitState('idle');
     }
-  }, [preselectedDivision, preselectedService]);
+  }, [preselectedDivision, preselectedService, preselectedBrief]);
+
+  const handleClearFocus = () => {
+    setValues((prev) => ({
+      ...prev,
+      brief: prev.brief.startsWith('Enquiry regarding ') ? '' : prev.brief,
+    }));
+    onClearPreselection?.();
+  };
 
   const toggleDivision = (division: string) => {
     setValues((prev) => {
@@ -76,6 +101,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     });
     setErrors((prev) => ({ ...prev, divisions: undefined }));
     setValidatedPayload(null);
+    setSubmitState('idle');
   };
 
   const validate = (): FormErrors => {
@@ -95,7 +121,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     return nextErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setCopied(false);
 
@@ -104,11 +130,45 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
     if (Object.keys(validationErrors).length > 0) {
       setValidatedPayload(null);
+      setSubmitState('idle');
       return;
     }
 
-    // Strict honesty: do not fake backend submission; report that no backend is connected.
-    setValidatedPayload({ ...values });
+    const payload = { ...values };
+    setValidatedPayload(payload);
+
+    if (!ENQUIRY_ENDPOINT) {
+      setSubmitState('local-only');
+      return;
+    }
+
+    setSubmitState('submitting');
+    try {
+      const res = await fetch(ENQUIRY_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name: payload.name,
+          email: payload.email,
+          company: payload.company || undefined,
+          divisions: payload.divisions.join(', '),
+          service: preselectedService || undefined,
+          message: payload.brief,
+        }),
+      });
+
+      if (!res.ok) {
+        setSubmitState('error');
+        return;
+      }
+
+      setSubmitState('sent');
+    } catch {
+      setSubmitState('error');
+    }
   };
 
   const formatBriefText = (payload: FormValues) =>
@@ -118,6 +178,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       `Email: ${payload.email}`,
       payload.company ? `Organization: ${payload.company}` : null,
       `Divisions: ${payload.divisions.join(', ')}`,
+      preselectedService ? `Capability: ${preselectedService}` : null,
       `Brief:\n${payload.brief}`,
     ]
       .filter(Boolean)
@@ -144,6 +205,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const payloadWhatsAppHref = validatedPayload
     ? buildWhatsAppUrl(formatBriefText(validatedPayload))
     : directWhatsAppHref;
+
+  const submitLabel = ENQUIRY_ENDPOINT
+    ? submitState === 'submitting'
+      ? 'SENDING ENQUIRY...'
+      : 'SUBMIT ENQUIRY'
+    : 'PREPARE WHATSAPP BRIEF';
 
   return (
     <section id="contact" className="w-contact" aria-labelledby="contact-heading">
@@ -195,46 +262,26 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 </a>
               </div>
             </div>
-
-            <div>
-              <span className="w-contact__channel-label">BUSINESS EMAIL (PLACEHOLDER)</span>
-              <p style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--text-primary)' }}>
-                hello@wontwe.example
-              </p>
-              <p className="w-contact__email-note">
-                Placeholder corporate email — use Call or WhatsApp above for immediate direct contact.
-              </p>
-            </div>
-
-            <div>
-              <span className="w-contact__channel-label">SOCIAL CHANNELS (PLACEHOLDERS)</span>
-              <div className="w-contact__socials">
-                {['LinkedIn', 'Instagram', 'Vimeo', 'X'].map((network) => (
-                  <a
-                    key={network}
-                    href="#contact"
-                    className="w-contact__social-link"
-                    aria-label={`WONTWE ${network} placeholder link`}
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <span>{network}</span>
-                    <ArrowUpRight size={13} aria-hidden="true" />
-                  </a>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
 
         <div className="w-contact__form-panel">
-          <div className="w-contact__system-notice" role="note">
-            <AlertCircle size={18} style={{ flexShrink: 0, color: 'var(--accent-ice)', marginTop: '2px' }} aria-hidden="true" />
-            <span>
-              <strong>WhatsApp Enquiry Preparation:</strong> Validate your details below to format
-              your project brief and send it directly to WONTWE on WhatsApp ({CONTACT_INFO.phoneDisplay}).
-              No background server submission occurs.
-            </span>
-          </div>
+          {preselectedService && (
+            <div className="w-contact__prefill-pill" role="status">
+              <span>
+                Selected capability: <strong>{preselectedService}</strong>
+              </span>
+              <button
+                type="button"
+                className="w-contact__prefill-clear"
+                onClick={handleClearFocus}
+                aria-label="Clear selected capability"
+              >
+                <X size={13} aria-hidden="true" />
+                <span>Clear</span>
+              </button>
+            </div>
+          )}
 
           <form className="w-contact__form" onSubmit={handleSubmit} noValidate>
             <div className="w-contact__row">
@@ -255,6 +302,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     setValues((v) => ({ ...v, name: e.target.value }));
                     setErrors((err) => ({ ...err, name: undefined }));
                     setValidatedPayload(null);
+                    setSubmitState('idle');
                   }}
                 />
                 {errors.name && (
@@ -281,6 +329,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     setValues((v) => ({ ...v, email: e.target.value }));
                     setErrors((err) => ({ ...err, email: undefined }));
                     setValidatedPayload(null);
+                    setSubmitState('idle');
                   }}
                 />
                 {errors.email && (
@@ -305,6 +354,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 onChange={(e) => {
                   setValues((v) => ({ ...v, company: e.target.value }));
                   setValidatedPayload(null);
+                  setSubmitState('idle');
                 }}
               />
             </div>
@@ -359,6 +409,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   setValues((v) => ({ ...v, brief: e.target.value }));
                   setErrors((err) => ({ ...err, brief: undefined }));
                   setValidatedPayload(null);
+                  setSubmitState('idle');
                 }}
               />
               {errors.brief && (
@@ -368,22 +419,46 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               )}
             </div>
 
-            <button type="submit" className="btn-primary" style={{ width: 'fit-content' }}>
-              <span>VALIDATE ENQUIRY BRIEF</span>
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ width: 'fit-content' }}
+              disabled={submitState === 'submitting'}
+            >
+              <span>{submitLabel}</span>
               <ArrowUpRight size={16} aria-hidden="true" />
             </button>
           </form>
 
-          {validatedPayload && (
+          {validatedPayload && submitState !== 'submitting' && (
             <div className="w-contact__result-box" role="status" aria-live="polite">
               <h3 className="w-contact__result-title">
-                Form Not Connected — Ready to Send via WhatsApp
+                {submitState === 'sent'
+                  ? 'Enquiry Submitted'
+                  : submitState === 'error'
+                  ? 'Endpoint Unavailable — Send via WhatsApp'
+                  : 'Ready to Send via WhatsApp'}
               </h3>
               <p className="w-contact__result-text">
-                Your enquiry passed local validation for{' '}
-                <strong>{validatedPayload.divisions.join(', ')}</strong>. No background backend
-                transmitted this automatically — click below to send your complete brief directly on
-                WhatsApp or copy it.
+                {submitState === 'sent' ? (
+                  <>
+                    Your enquiry for <strong>{validatedPayload.divisions.join(', ')}</strong> has
+                    been delivered. You can also send a copy directly on WhatsApp.
+                  </>
+                ) : submitState === 'error' ? (
+                  <>
+                    The configured submission endpoint could not be reached. Send your formatted brief
+                    for <strong>{validatedPayload.divisions.join(', ')}</strong> directly on
+                    WhatsApp or copy it below.
+                  </>
+                ) : (
+                  <>
+                    Your enquiry brief for{' '}
+                    <strong>{validatedPayload.divisions.join(', ')}</strong> is formatted locally — no
+                    background server submission occurs. Click below to open WhatsApp or copy your
+                    brief.
+                  </>
+                )}
               </p>
               <div className="w-contact__result-actions">
                 <a
@@ -408,4 +483,3 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     </section>
   );
 };
-

@@ -1,12 +1,18 @@
 :root {
-  /* Primary Brand Surfaces (Black & Graphite Dark Architecture) */
+  color-scheme: dark;
+
+  /* Primary Brand Surfaces (Default Night Mode: Black & Graphite Architecture) */
   --bg-void: #050608;
   --bg-navy: #0a0b12;
   --bg-graphite: #111219;
   --bg-elevated: rgba(17, 18, 25, 0.78);
   --bg-glass: rgba(10, 11, 18, 0.76);
+  --bg-surface: #0a0b12;
+  --bg-card: rgba(10, 11, 18, 0.72);
+  --bg-card-solid: #0b0d16;
+  --bg-input: rgba(5, 6, 8, 0.85);
 
-  /* Typography Colors (Crisp White & Neutral Slate) */
+  /* Typography Colors (Night Mode: Crisp Cool White & Neutral Slate) */
   --text-primary: #f5f7fa;
   --text-muted: #989dab;
   --text-subtle: #646978;
@@ -18,10 +24,14 @@
   --accent-electric-soft: rgba(125, 24, 224, 0.16);
   --accent-ice-soft: rgba(168, 107, 255, 0.14);
 
-  /* Hairlines & Surfaces */
+  /* Hairlines & Surfaces (Night Mode) */
   --border-hairline: rgba(245, 247, 250, 0.09);
   --border-strong: rgba(245, 247, 250, 0.18);
   --border-accent: rgba(168, 107, 255, 0.44);
+
+  /* Elevation & Shadows */
+  --shadow-card: 0 24px 60px -20px rgba(0, 0, 0, 0.75);
+  --shadow-float: 0 14px 30px -10px rgba(0, 0, 0, 0.75);
 
   /* Typography Families */
   --font-display: 'Space Grotesk', 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -39,9 +49,9 @@
   --text-micro: clamp(0.7rem, 0.8vw, 0.78rem);
 
   /* Layout & Spacing */
-  --container-max: 1360px;
-  --gutter-x: clamp(1.25rem, 5.2vw, 5rem);
-  --section-pad-y: clamp(5rem, 10vh, 9rem);
+  --container-max: 1320px;
+  --gutter-x: clamp(1.25rem, 4.5vw, 4.5rem);
+  --section-pad-y: clamp(4.5rem, 9vh, 8rem);
   --nav-height: 76px;
 
   /* Motion Curves */
@@ -57,4 +67,42 @@
   --z-navbar: 50;
   --z-overlay: 90;
   --z-skip: 120;
+}
+
+/* Bright Mode (Light Palette: Crisp Clean Platinum & Obsidian Ink) */
+[data-theme='light'],
+html.light {
+  color-scheme: light;
+
+  /* Primary Brand Surfaces (Bright Mode) */
+  --bg-void: #f8f9fc;
+  --bg-navy: #f0f2f8;
+  --bg-graphite: #e6e9f2;
+  --bg-elevated: rgba(255, 255, 255, 0.94);
+  --bg-glass: rgba(255, 255, 255, 0.88);
+  --bg-surface: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-solid: #ffffff;
+  --bg-input: #ffffff;
+
+  /* Typography Colors (Bright Mode: High-contrast Obsidian & Charcoal Slate) */
+  --text-primary: #0a0d14;
+  --text-muted: #4a5264;
+  --text-subtle: #737b8d;
+
+  /* Official WONTWE Brand Purple in Bright Mode (high-contrast readable purple) */
+  --accent-electric: #7d18e0;
+  --accent-deep: #5e12b8;
+  --accent-ice: #6a13bc; /* Rich readable purple on bright surfaces */
+  --accent-electric-soft: rgba(125, 24, 224, 0.08);
+  --accent-ice-soft: rgba(125, 24, 224, 0.06);
+
+  /* Hairlines & Surfaces (Bright Mode) */
+  --border-hairline: rgba(15, 23, 42, 0.09);
+  --border-strong: rgba(15, 23, 42, 0.18);
+  --border-accent: rgba(125, 24, 224, 0.38);
+
+  /* Elevation & Shadows (Bright Mode) */
+  --shadow-card: 0 20px 48px -16px rgba(15, 23, 42, 0.07);
+  --shadow-float: 0 10px 24px -6px rgba(15, 23, 42, 0.1);
 }

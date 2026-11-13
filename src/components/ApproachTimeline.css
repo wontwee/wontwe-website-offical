@@ -23,6 +23,10 @@
   overflow: hidden;
 }
 
+[data-theme='light'] .w-approach__progress-track {
+  background: rgba(15, 23, 42, 0.08);
+}
+
 .w-approach__progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--accent-electric), var(--accent-ice));
@@ -48,6 +52,11 @@
   transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s var(--ease-cinematic);
 }
 
+[data-theme='light'] .w-approach__node {
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
 .w-approach__node:hover {
   border-color: var(--border-strong);
   transform: translateY(-2px);
@@ -56,6 +65,10 @@
 .w-approach__node--active {
   border-color: var(--accent-ice);
   background: linear-gradient(160deg, rgba(125, 24, 224, 0.16) 0%, rgba(10, 11, 18, 0.9) 100%);
+}
+
+[data-theme='light'] .w-approach__node--active {
+  background: linear-gradient(160deg, rgba(125, 24, 224, 0.1) 0%, #ffffff 100%);
 }
 
 .w-approach__node-num {

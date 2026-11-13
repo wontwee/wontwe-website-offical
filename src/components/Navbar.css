@@ -20,6 +20,11 @@
   border-bottom-color: var(--border-hairline);
 }
 
+[data-theme='light'] .w-navbar--scrolled {
+  background: rgba(248, 249, 252, 0.88);
+  border-bottom-color: var(--border-hairline);
+}
+
 .w-navbar__inner {
   width: 100%;
   max-width: var(--container-max);
@@ -106,6 +111,13 @@
   box-shadow: 0 0 10px var(--accent-electric);
 }
 
+.w-navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 2;
+}
+
 .w-navbar__burger {
   display: none;
   align-items: center;
@@ -118,7 +130,12 @@
   background: rgba(17, 21, 28, 0.5);
   backdrop-filter: blur(10px);
   z-index: 2;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+[data-theme='light'] .w-navbar__burger {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: var(--border-hairline);
 }
 
 .w-navbar__burger:hover {
@@ -187,6 +204,11 @@
   white-space: nowrap;
 }
 
+[data-theme='light'] .w-chapter-item__label {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
 .w-chapter-item:hover .w-chapter-item__label,
 .w-chapter-item:focus-visible .w-chapter-item__label {
   opacity: 1;
@@ -203,6 +225,10 @@
   height: 2px;
   background: rgba(245, 247, 250, 0.22);
   transition: width 0.35s var(--ease-cinematic), background-color 0.3s ease;
+}
+
+[data-theme='light'] .w-chapter-item__pip {
+  background: rgba(15, 23, 42, 0.22);
 }
 
 .w-chapter-item:hover .w-chapter-item__pip {
@@ -231,6 +257,10 @@
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.45s var(--ease-cinematic), visibility 0.45s ease;
+}
+
+[data-theme='light'] .w-mobile-menu {
+  background: radial-gradient(circle at 80% 15%, rgba(125, 24, 224, 0.08) 0%, rgba(248, 249, 252, 0.98) 65%);
 }
 
 .w-mobile-menu--open {
@@ -289,5 +319,27 @@
 
   .w-navbar__burger {
     display: inline-flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .w-brand-wordmark-hide-compact,
+  [data-theme='light'] .w-brand-wordmark-hide-compact,
+  html.light .w-brand-wordmark-hide-compact {
+    display: none !important;
+  }
+
+  .w-navbar__inner {
+    padding-inline: 1rem;
+    gap: 0.5rem;
+  }
+
+  .w-navbar__actions {
+    gap: 0.5rem;
+  }
+
+  .w-navbar__burger {
+    width: 38px;
+    height: 38px;
   }
 }
